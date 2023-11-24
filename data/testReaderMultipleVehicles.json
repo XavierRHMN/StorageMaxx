@@ -1,0 +1,26 @@
+{
+  "name": "My Vehicle Storage",
+  "vehicles": [
+    {
+      "year": 1999,
+      "price": 5000,
+      "name": "MX-5",
+      "type": 1,
+      "brand": "Mazda"
+    },
+    {
+      "year": 2010,
+      "price": 16000,
+      "name": "370z",
+      "type": 1,
+      "brand": "Nissan"
+    },
+    {
+      "year": 2004,
+      "price": 16399,
+      "name": "Ninja ZX-10R",
+      "type": 2,
+      "brand": "Kawasaki"
+    }
+  ]
+}
