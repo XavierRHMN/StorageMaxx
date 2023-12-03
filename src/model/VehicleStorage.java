@@ -22,12 +22,14 @@ public class VehicleStorage implements Writable {
     // MODIFIES: this
     // EFFECTS: adds a vehicle to the vehicle list
     public void addVehicle(Vehicle vehicle) {
+        EventLog.getInstance().logEvent(new Event("Added vehicle to garage "));
         vehicles.add(vehicle);
     }
 
     // MODIFIES: this
     // EFFECTS: removes a vehicle from the vehicle list
     public void removeVehicle(Vehicle vehicle) {
+        EventLog.getInstance().logEvent(new Event("Removed vehicle from garage "));
         vehicles.remove(vehicle);
     }
 
