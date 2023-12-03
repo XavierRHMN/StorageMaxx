@@ -1,5 +1,7 @@
 package ui;
 
+import model.Event;
+import model.EventLog;
 import model.Vehicle;
 import model.VehicleStorage;
 import persistence.JsonReader;
@@ -7,11 +9,14 @@ import persistence.JsonWriter;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.*;
 
 // Vehicle manager application that uses a GUI
 public class VehicleManagerGUI extends JFrame {
     private VehicleStorage vehicleStorage;
+    private EventLog eventLog;
     private JButton showAllButton;
     private JButton showCarsButton;
     private JButton showBikesButton;
@@ -35,8 +40,15 @@ public class VehicleManagerGUI extends JFrame {
 
     // EFFECTS: runs the vehicle manager application
     public VehicleManagerGUI() {
+        eventLog = EventLog.getInstance();
         vehicleStorage = new VehicleStorage("Users Storage");
         initComponents();
+    }
+
+    private void printLoggedEvents() {
+        for (Event event : eventLog) { // Iterate over the events in the log
+            System.out.println(event.toString()); // Print each event (uses Event's toString method)
+        }
     }
 
     // MODIFIES: this
@@ -192,6 +204,7 @@ public class VehicleManagerGUI extends JFrame {
     // MODIFIES: this
     // EFFECTS: lays out the components of the user interface
     private void layoutComponents() {
+        JFrame frame = new JFrame();
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
 
@@ -211,7 +224,23 @@ public class VehicleManagerGUI extends JFrame {
         addButtons(panel, gbc);
         addDisplayArea(panel, gbc);
 
-        add(panel);
+        frame.add(panel);
+        frame.setSize(600, 800);
+        frame.setLocation(650, 20);
+        frame.setTitle("StorageMaxx");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+
+        addWindowLister(frame);
+    }
+
+    private void addWindowLister(JFrame frame) {
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                printLoggedEvents();
+            }
+        });
     }
 
     // MODIFIES: this
