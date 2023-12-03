@@ -35,4 +35,5 @@
 ## Code Attribution
 - [JsonSerialization Demo](https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo) for saving and loading from json file
 - [TellerApp](https://github.students.cs.ubc.ca/CPSC210/TellerApp) for console user interface
+- [AlarmSystem] (https://github.students.cs.ubc.ca/CPSC210/AlarmSystem) for event logging
 

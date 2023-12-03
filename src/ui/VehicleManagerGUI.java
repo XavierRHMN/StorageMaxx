@@ -46,9 +46,9 @@ public class VehicleManagerGUI extends JFrame {
     }
 
     private void printLoggedEvents() {
-        for (Event event : eventLog) { // Iterate over the events in the log
-            System.out.println(event.toString()); // Print each event (uses Event's toString method)
-        }
+            for (Event event : eventLog) { // Iterate over the events in the log
+                System.out.println(event.toString()); // Print each event (uses Event's toString method)
+            }
     }
 
     // MODIFIES: this
@@ -138,10 +138,10 @@ public class VehicleManagerGUI extends JFrame {
         Vehicle v2 = new Vehicle("Nissan", "370z", 2010, 16000, 1);
         Vehicle v3 = new Vehicle("Kawasaki", "Ninja ZX-10R", 2004, 16399, 2);
         Vehicle v4 = new Vehicle("Bayliner", "Capri", 2005, 12500, 3);
-        vehicleStorage.addVehicle(v1);
-        vehicleStorage.addVehicle(v2);
-        vehicleStorage.addVehicle(v3);
-        vehicleStorage.addVehicle(v4);
+        vehicleStorage.addVehicle(v1, false);
+        vehicleStorage.addVehicle(v2, false);
+        vehicleStorage.addVehicle(v3, false);
+        vehicleStorage.addVehicle(v4, false);
     }
 
     //EFFECTS: initializes the JSON Reader and Writer
@@ -161,13 +161,13 @@ public class VehicleManagerGUI extends JFrame {
 
         if (carRadio.isSelected()) {
             Vehicle car = new Vehicle(brand, name, year, price, 1);
-            vehicleStorage.addVehicle(car);
+            vehicleStorage.addVehicle(car, true);
         } else if (bikeRadio.isSelected()) {
             Vehicle bike = new Vehicle(brand, name, year, price, 2);
-            vehicleStorage.addVehicle(bike);
+            vehicleStorage.addVehicle(bike, true);
         } else if (yachtRadio.isSelected()) {
             Vehicle yacht = new Vehicle(brand, name, year, price, 3);
-            vehicleStorage.addVehicle(yacht);
+            vehicleStorage.addVehicle(yacht, true);
         }
         refreshDisplay();
     }
@@ -178,8 +178,8 @@ public class VehicleManagerGUI extends JFrame {
     private void removeVehicle() {
         Vehicle chosenVehicleToRemove = vehicleStorage.getVehicle(Integer.parseInt(removeField.getText()) - 1);
         vehicleStorage.removeVehicle(chosenVehicleToRemove);
-        System.out.println("The " + chosenVehicleToRemove.getBrand() + " " + chosenVehicleToRemove.getName()
-                + " has been successfully removed from the garage");
+//        System.out.println("The " + chosenVehicleToRemove.getBrand() + " " + chosenVehicleToRemove.getName()
+//                + " has been successfully removed from the garage");
         refreshDisplay();
     }
 

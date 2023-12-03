@@ -21,8 +21,11 @@ public class VehicleStorage implements Writable {
 
     // MODIFIES: this
     // EFFECTS: adds a vehicle to the vehicle list
-    public void addVehicle(Vehicle vehicle) {
-        EventLog.getInstance().logEvent(new Event("Added vehicle to garage "));
+    public void addVehicle(Vehicle vehicle, Boolean log) {
+        if (log) {
+            EventLog.getInstance().logEvent(new Event("Added " + vehicle.getTypeName()
+                    +  " to garage "));
+        }
         vehicles.add(vehicle);
     }
 

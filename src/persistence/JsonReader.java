@@ -66,7 +66,7 @@ public class JsonReader {
         int price = jsonObject.getInt("price");
         int type = jsonObject.getInt("type");
         Vehicle v = new Vehicle(brand, name, year, price, type);
-        vs.addVehicle(v);
+        vs.addVehicle(v, false);
     }
 }
 

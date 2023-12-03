@@ -66,10 +66,10 @@ public class VehicleManager {
         Vehicle v2 = new Vehicle("Nissan", "370z", 2010, 16000, 1);
         Vehicle v3 = new Vehicle("Kawasaki", "Ninja ZX-10R", 2004, 16399, 2);
         Vehicle v4 = new Vehicle("Bayliner", "Capri", 2005, 12500, 3);
-        vehicleStorage.addVehicle(v1);
-        vehicleStorage.addVehicle(v2);
-        vehicleStorage.addVehicle(v3);
-        vehicleStorage.addVehicle(v4);
+        vehicleStorage.addVehicle(v1, true);
+        vehicleStorage.addVehicle(v2, true);
+        vehicleStorage.addVehicle(v3, true);
+        vehicleStorage.addVehicle(v4, true);
         input = new Scanner(System.in);
         input.useDelimiter("\n");
     }
@@ -103,7 +103,7 @@ public class VehicleManager {
         VehicleStorage specifiedVehicles = new VehicleStorage("Specified Vehicles");
         for (Vehicle vehicle: vehicleStorage.getVehicles()) {
             if (vehicle.getType() == vehicleType || vehicleType == 0) {
-                specifiedVehicles.addVehicle(vehicle);
+                specifiedVehicles.addVehicle(vehicle, false);
             }
         }
         if (specifiedVehicles.getNumVehicles() == 0) {
@@ -166,7 +166,7 @@ public class VehicleManager {
         int type = vehicleType(input);
 
         Vehicle vehicle = new Vehicle(brand, name, year, price, type);
-        vehicleStorage.addVehicle(vehicle);
+        vehicleStorage.addVehicle(vehicle, false);
         System.out.println("Your" + " " + vehicle.getBrand() + " " + vehicle.getName()
                 + " " + "has been successfully added to the garage");
     }
