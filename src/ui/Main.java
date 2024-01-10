@@ -8,7 +8,7 @@ public class Main {
         SwingUtilities.invokeLater(() -> {
             VehicleManagerGUI manager = new VehicleManagerGUI();
             manager.setVisible(true); // Make the frame visible
-            manager.setSize(500, 500);
+            manager.setSize(500, 475);
             manager.setLocationRelativeTo(null);
             manager.setTitle("StorageMaxx");
             manager.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
