@@ -9,13 +9,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
 
+import static model.Vehicle.VehicleType.*;
+
 // Vehicle manager application that uses console commands
 public class VehicleManager {
     private static final String JSON_STORE = "./data/Storage.json";
     private VehicleStorage vehicleStorage;
     private Scanner input;
-    private JsonWriter jsonWriter;
-    private JsonReader jsonReader;
+    private final JsonWriter jsonWriter;
+    private final JsonReader jsonReader;
 
     // EFFECTS: runs the vehicle manager application
     public VehicleManager() {
@@ -62,10 +64,10 @@ public class VehicleManager {
     // MODIFIES: this
     // EFFECTS: initializes vehicles
     private void initVehicles() {
-        Vehicle v1 = new Vehicle("Mazda", "MX-5", 1999, 5000, 1);
-        Vehicle v2 = new Vehicle("Nissan", "370z", 2010, 16000, 1);
-        Vehicle v3 = new Vehicle("Kawasaki", "Ninja ZX-10R", 2004, 16399, 2);
-        Vehicle v4 = new Vehicle("Bayliner", "Capri", 2005, 12500, 3);
+        Vehicle v1 = new Vehicle("Mazda", "MX-5", 1999, 5000, CAR);
+        Vehicle v2 = new Vehicle("Nissan", "370z", 2010, 16000, BIKE);
+        Vehicle v3 = new Vehicle("Kawasaki", "Ninja ZX-10R", 2004, 16399, BIKE);
+        Vehicle v4 = new Vehicle("Bayliner", "Capri", 2005, 12500, YACHT);
         vehicleStorage.addVehicle(v1, true);
         vehicleStorage.addVehicle(v2, true);
         vehicleStorage.addVehicle(v3, true);
@@ -77,32 +79,42 @@ public class VehicleManager {
     // MODIFIES: this
     // EFFECTS: processes user command
     private void processCommand(String command) {
-        if (command.equals("v")) {
-            displayAll();
-        } else if (command.equals("1")) {
-            displayCars();
-        } else if (command.equals("2")) {
-            displayBikes();
-        } else if (command.equals("3")) {
-            displayYachts();
-        } else if (command.equals("a")) {
-            addVehicleFunction();
-        } else if (command.equals("r")) {
-            removeVehicleFunction(input);
-        } else if (command.equals("s")) {
-            saveVehicles();
-        } else if (command.equals("l")) {
-            loadVehicles();
-        } else {
-            System.out.println("Invalid Selection");
+        switch (command) {
+            case "v":
+                displayAll();
+                break;
+            case "1":
+                displayCars();
+                break;
+            case "2":
+                displayBikes();
+                break;
+            case "3":
+                displayYachts();
+                break;
+            case "a":
+                addVehicleFunction();
+                break;
+            case "r":
+                removeVehicleFunction(input);
+                break;
+            case "s":
+                saveVehicles();
+                break;
+            case "l":
+                loadVehicles();
+                break;
+            default:
+                System.out.println("Invalid Selection");
+                break;
         }
     }
 
     // EFFECTS: prints out a string for an empty garage
-    private void printEmptyGarage(String s, int vehicleType) {
+    private void printEmptyGarage(String s, Vehicle.VehicleType vehicleType) {
         VehicleStorage specifiedVehicles = new VehicleStorage("Specified Vehicles");
         for (Vehicle vehicle: vehicleStorage.getVehicles()) {
-            if (vehicle.getType() == vehicleType || vehicleType == 0) {
+            if (vehicle.getType() == vehicleType || vehicleType == ALL) {
                 specifiedVehicles.addVehicle(vehicle, false);
             }
         }
@@ -113,41 +125,37 @@ public class VehicleManager {
 
     // EFFECTS: displays all vehicles to user
     private void displayAll() {
-        int all = 0;
         System.out.println("Vehicles:");
-        displaySpecifiedVehicle(all);
-        printEmptyGarage("vehicles!", all);
+        displaySpecifiedVehicle(ALL);
+        printEmptyGarage("vehicles!", ALL);
     }
 
     // EFFECTS: displays all cars to user
     private void displayCars() {
-        int car = 1;
         System.out.println("Cars:");
-        displaySpecifiedVehicle(car);
-        printEmptyGarage("cars!", car);
+        displaySpecifiedVehicle(CAR);
+        printEmptyGarage("cars!", ALL);
     }
 
     // EFFECTS: displays all bikes to user
     private void displayBikes() {
-        int bike = 2;
         System.out.println("Bikes:");
-        displaySpecifiedVehicle(bike);
-        printEmptyGarage("bikes!", bike);
+        displaySpecifiedVehicle(BIKE);
+        printEmptyGarage("bikes!", BIKE);
     }
 
     // EFFECTS: displays all yachts to user
     private void displayYachts() {
-        int yacht = 3;
         System.out.println("Yachts:");
-        displaySpecifiedVehicle(yacht);
-        printEmptyGarage("yachts!", yacht);
+        displaySpecifiedVehicle(YACHT);
+        printEmptyGarage("yachts!", YACHT);
     }
 
     // EFFECTS: helper function that displays the specified vehicle
-    private void displaySpecifiedVehicle(int type) {
+    private void displaySpecifiedVehicle(Vehicle.VehicleType type) {
         int count = 0;
         for (Vehicle vehicle : vehicleStorage.getVehicles()) {
-            if (vehicle.getType() == type || type == 0) {
+            if (vehicle.getType() == type || type == ALL) {
                 count++;
                 System.out.println("(" + count + ")" + " " + vehicle.getBrand() + " " + vehicle.getName()
                         + " Price: " + "$" + vehicle.getPrice() + " Year: " + vehicle.getYear());
@@ -163,7 +171,7 @@ public class VehicleManager {
         String name = vehicleName(input);
         int year = vehicleYear(input);
         int price = vehiclePrice(input);
-        int type = vehicleType(input);
+        Vehicle.VehicleType type = vehicleType(input);
 
         Vehicle vehicle = new Vehicle(brand, name, year, price, type);
         vehicleStorage.addVehicle(vehicle, false);
@@ -198,18 +206,20 @@ public class VehicleManager {
     }
 
     // EFFECTS: user input changes the vehicle's type
-    public int inputVehicleType(Scanner input) {
+    public Vehicle.VehicleType inputVehicleType(Scanner input) {
         while (true) {
             if (!input.hasNextInt()) {
                 System.out.println("Invalid input. Please try again.");
                 input.next();
             } else {
                 int value = input.nextInt();
-                if (value >= 1 && value <= vehicleStorage.getLargestType()) {
-                    return value;
+                if (value >= 1 && value <= 4) {
+                    if (value == 1) return CAR;
+                    if (value == 2) return BIKE;
+                    if (value == 3) return YACHT;
                 } else {
                     System.out.println("Invalid input. Please enter a value between 1 and "
-                            + vehicleStorage.getLargestType());
+                            + 4);
                 }
             }
         }
@@ -244,7 +254,7 @@ public class VehicleManager {
     }
 
     // EFFECTS: type of the vehicle is the users input
-    public int vehicleType(Scanner input) {
+    public Vehicle.VehicleType vehicleType(Scanner input) {
         System.out.println("Type '1' to save as a car");
         System.out.println("Type '2' to save as a bike");
         System.out.println("Type '3' to save as a yacht");

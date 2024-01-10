@@ -10,6 +10,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 
+import static model.Vehicle.VehicleType.*;
+
 // Vehicle manager application that uses a GUI
 public class VehicleManagerGUI extends JFrame {
     private VehicleStorage vehicleStorage;
@@ -26,6 +28,7 @@ public class VehicleManagerGUI extends JFrame {
     private JRadioButton carRadio;
     private JRadioButton bikeRadio;
     private JRadioButton yachtRadio;
+    private JRadioButton otherRadio;
     private JButton addButton;
     private JButton removeButton;
     private JButton saveButton;
@@ -45,6 +48,7 @@ public class VehicleManagerGUI extends JFrame {
     // MODIFIES: this
     // EFFECTS: initializes the necessary components for the application
     public void initComponents() {
+
         initDisplay();
         initButtons();
         initRadioButtons();
@@ -113,11 +117,13 @@ public class VehicleManagerGUI extends JFrame {
         carRadio = new JRadioButton("Cars");
         bikeRadio = new JRadioButton("Bikes");
         yachtRadio = new JRadioButton("Yachts");
+        otherRadio = new JRadioButton("Other");
 
         ButtonGroup group = new ButtonGroup();
         group.add(carRadio);
         group.add(bikeRadio);
         group.add(yachtRadio);
+        group.add(otherRadio);
         carRadio.setSelected(true);
     }
 
@@ -143,10 +149,10 @@ public class VehicleManagerGUI extends JFrame {
     // MODIFIES: this
     // EFFECTS: initializes the vehicles
     private void initVehicles() {
-        Vehicle v1 = new Vehicle("Mazda", "MX-5", 1999, 5000, 1);
-        Vehicle v2 = new Vehicle("Nissan", "370z", 2010, 16000, 1);
-        Vehicle v3 = new Vehicle("Kawasaki", "Ninja ZX-10R", 2004, 16399, 2);
-        Vehicle v4 = new Vehicle("Bayliner", "Capri", 2005, 12500, 3);
+        Vehicle v1 = new Vehicle("Mazda", "MX-5", 1999, 5000, CAR);
+        Vehicle v2 = new Vehicle("Nissan", "370z", 2010, 16000, CAR);
+        Vehicle v3 = new Vehicle("Kawasaki", "Ninja ZX-10R", 2004, 16399, BIKE);
+        Vehicle v4 = new Vehicle("Bayliner", "Capri", 2005, 12500, YACHT);
         vehicleStorage.addVehicle(v1, true);
         vehicleStorage.addVehicle(v2, true);
         vehicleStorage.addVehicle(v3, true);
@@ -169,13 +175,16 @@ public class VehicleManagerGUI extends JFrame {
         int price = Integer.parseInt(priceField.getText());
 
         if (carRadio.isSelected()) {
-            Vehicle car = new Vehicle(brand, name, year, price, 1);
+            Vehicle car = new Vehicle(brand, name, year, price, CAR);
             vehicleStorage.addVehicle(car, false);
         } else if (bikeRadio.isSelected()) {
-            Vehicle bike = new Vehicle(brand, name, year, price, 2);
+            Vehicle bike = new Vehicle(brand, name, year, price, BIKE);
             vehicleStorage.addVehicle(bike, false);
         } else if (yachtRadio.isSelected()) {
-            Vehicle yacht = new Vehicle(brand, name, year, price, 3);
+            Vehicle yacht = new Vehicle(brand, name, year, price, YACHT);
+            vehicleStorage.addVehicle(yacht, false);
+        } else if (otherRadio.isSelected()) {
+            Vehicle yacht = new Vehicle(brand, name, year, price, OTHER);
             vehicleStorage.addVehicle(yacht, false);
         }
         refreshDisplay();
@@ -204,6 +213,7 @@ public class VehicleManagerGUI extends JFrame {
         showCarsButton.addActionListener(e -> displayArea.setText(getSpecifiedVehicleInfo("Car")));
         showBikesButton.addActionListener(e -> displayArea.setText(getSpecifiedVehicleInfo("Bike")));
         showYachtsButton.addActionListener(e -> displayArea.setText(getSpecifiedVehicleInfo("Yacht")));
+        showYachtsButton.addActionListener(e -> displayArea.setText(getSpecifiedVehicleInfo("Other")));
         addButton.addActionListener(e -> addVehicle());
         removeButton.addActionListener(e -> removeVehicle());
         saveButton.addActionListener(e -> saveGarage());
@@ -225,6 +235,7 @@ public class VehicleManagerGUI extends JFrame {
         tabbedPane.addTab("Cars", new JPanel());
         tabbedPane.addTab("Bikes", new JPanel());
         tabbedPane.addTab("Yachts", new JPanel());
+        tabbedPane.addTab("Other", new JPanel());
 
         // Add tabbedPane to the main panel
         gbc.gridx = 0;
@@ -302,14 +313,18 @@ public class VehicleManagerGUI extends JFrame {
         managePanel.add(carRadio, gbc);
         gbc.gridx++;
         managePanel.add(bikeRadio, gbc);
-        gbc.gridx++;
+        gbc.gridy++;
+        gbc.gridx = 0;
         managePanel.add(yachtRadio, gbc);
+        gbc.gridx++;
+        managePanel.add(otherRadio, gbc);
 
         // Remove Field
         gbc.gridx = 0;
         gbc.gridy++;
         managePanel.add(new JLabel("Remove Index:"), gbc);
         gbc.gridx++;
+        gbc.weightx = 0;
         managePanel.add(removeField, gbc);
 
         // Buttons spanning two columns
@@ -345,6 +360,8 @@ public class VehicleManagerGUI extends JFrame {
             case "Yachts":
                 displayArea.setText(getSpecifiedVehicleInfo("Yacht"));
                 break;
+            case "Other":
+                displayArea.setText(getSpecifiedVehicleInfo("Other"));
         }
     }
 

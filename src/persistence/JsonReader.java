@@ -33,7 +33,7 @@ public class JsonReader {
         StringBuilder contentBuilder = new StringBuilder();
 
         try (Stream<String> stream = Files.lines(Paths.get(source), StandardCharsets.UTF_8)) {
-            stream.forEach(s -> contentBuilder.append(s));
+            stream.forEach(contentBuilder::append);
         }
 
         return contentBuilder.toString();
@@ -64,7 +64,7 @@ public class JsonReader {
         String name = jsonObject.getString("name");
         int year = jsonObject.getInt("year");
         int price = jsonObject.getInt("price");
-        int type = jsonObject.getInt("type");
+        Vehicle.VehicleType type = Vehicle.VehicleType.valueOf(jsonObject.getString("type"));
         Vehicle v = new Vehicle(brand, name, year, price, type);
         vs.addVehicle(v, false);
     }

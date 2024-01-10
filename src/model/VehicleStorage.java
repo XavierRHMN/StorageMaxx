@@ -10,7 +10,7 @@ import java.util.List;
 
 // Represents a vehicle storage having a collection of cars, bikes, etc
 public class VehicleStorage implements Writable {
-    private String name;
+    private final String name;
     private List<Vehicle> vehicles;
 
     // EFFECTS: constructs an empty vehicle storage with a name
@@ -74,15 +74,6 @@ public class VehicleStorage implements Writable {
     // EFFECTS: gets the name of the Vehicle Storage
     public String getName() {
         return name;
-    }
-
-    // EFFECTS: gets the largest type in vehicles
-    public int getLargestType() {
-        List<Integer> types = new ArrayList<>();
-        for (Vehicle vehicle: vehicles) {
-            types.add(vehicle.getType());
-        }
-        return Collections.max(types);
     }
 }
 

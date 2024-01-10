@@ -3,19 +3,24 @@ package model;
 import org.json.JSONObject;
 import persistence.Writable;
 
+import static model.Vehicle.VehicleType.*;
+
 // Represents a bought vehicle having a brand, name, year, price (in dollars), type
 public class Vehicle implements Writable {
-    private String brand;
-    private String name;
-    private int year;
-    private int price;
-    private int type;
+    private final String brand;
+    private final String name;
+    private final int year;
+    private final int price;
+    private final VehicleType type;
 
+    public enum VehicleType {
+        ALL, CAR, BIKE, YACHT, OTHER
+    }
 
     // REQUIRES: name has a non-zero length, year <= current year, and price
     // must be a non-negative integer
     // EFFECTS: constructs a vehicle with a brand, name, year, price and type
-    public Vehicle(String brand, String name, int year, int price, int type) {
+    public Vehicle(String brand, String name, int year, int price, VehicleType type) {
         this.brand = brand;
         this.name = name;
         this.year = year;
@@ -39,18 +44,25 @@ public class Vehicle implements Writable {
         return price;
     }
 
-    public int getType() {
+    public VehicleType getType() {
         return type;
     }
 
+    public String getTypeString() {
+        return type.toString();
+    }
+
+
     public String getTypeName() {
-        if (getType() == 1) {
+        if (getType() == CAR) {
             return "Car";
-        } else if (getType() == 2) {
+        } else if (getType() == BIKE) {
             return "Bike";
-        } else if (getType() == 3) {
+        } else if (getType() == YACHT) {
             return "Yacht";
-        } else {
+        } else if (getType() == OTHER) {
+            return "Other";
+        }else {
             return "Vehicle";
         }
     }
@@ -63,7 +75,7 @@ public class Vehicle implements Writable {
         json.put("name", name);
         json.put("year", year);
         json.put("price", price);
-        json.put("type", type);
+        json.put("type", type.toString());
         return json;
     }
 }
