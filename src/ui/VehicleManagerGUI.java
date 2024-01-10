@@ -325,6 +325,7 @@ public class VehicleManagerGUI extends JFrame {
         managePanel.add(new JLabel("Remove Index:"), gbc);
         gbc.gridx++;
         gbc.weightx = 0;
+        removeField.setPreferredSize(new Dimension(200, 30));
         managePanel.add(removeField, gbc);
 
         // Buttons spanning two columns
