@@ -1,7 +1,6 @@
 package ui;
 
-import model.Event;
-import model.EventLog;
+import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import model.Vehicle;
 import model.VehicleStorage;
 import persistence.JsonReader;
@@ -9,14 +8,11 @@ import persistence.JsonWriter;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.*;
 
 // Vehicle manager application that uses a GUI
 public class VehicleManagerGUI extends JFrame {
     private VehicleStorage vehicleStorage;
-    private EventLog eventLog;
     private JButton showAllButton;
     private JButton showCarsButton;
     private JButton showBikesButton;
@@ -36,24 +32,20 @@ public class VehicleManagerGUI extends JFrame {
     private JButton loadButton;
     private JsonWriter jsonWriter;
     private JsonReader jsonReader;
+    private JScrollPane scrollPane;
     private static final String JSON_STORE = "./data/Storage.json";
 
     // EFFECTS: runs the vehicle manager application
     public VehicleManagerGUI() {
-        eventLog = EventLog.getInstance();
         vehicleStorage = new VehicleStorage("Users Storage");
+        setLookAndFeel();
         initComponents();
-    }
-
-    private void printLoggedEvents() {
-            for (Event event : eventLog) { // Iterate over the events in the log
-                System.out.println(event.toString()); // Print each event (uses Event's toString method)
-            }
     }
 
     // MODIFIES: this
     // EFFECTS: initializes the necessary components for the application
     public void initComponents() {
+        initDisplay();
         initButtons();
         initRadioButtons();
         initTextFields();
@@ -64,6 +56,15 @@ public class VehicleManagerGUI extends JFrame {
         addActionListeners();
         layoutComponents();
     }
+
+    private void setLookAndFeel() {
+        try {
+            UIManager.setLookAndFeel (new FlatMacDarkLaf());
+        } catch (Exception ex) {
+            System.err.println( "Failed to initialize LaF");
+        }
+    }
+
 
     // MODIFIES: this
     //EFFECTS: initializes the buttons
@@ -120,10 +121,18 @@ public class VehicleManagerGUI extends JFrame {
         carRadio.setSelected(true);
     }
 
+    public void initDisplay() {
+        // Initialize other components...
+        displayArea = new JTextArea(20, 40);
+        displayArea.setEditable(false); // If you don't want users to edit the text
+        scrollPane = new JScrollPane(displayArea);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        // Initialize other components...
+    }
+
     // MODIFIES: this
     //EFFECTS: initializes the text fields
     private void initTextFields() {
-        displayArea = new JTextArea(20, 40);
         brandField = new JTextField();
         nameField = new JTextField();
         yearField = new JTextField();
@@ -138,10 +147,10 @@ public class VehicleManagerGUI extends JFrame {
         Vehicle v2 = new Vehicle("Nissan", "370z", 2010, 16000, 1);
         Vehicle v3 = new Vehicle("Kawasaki", "Ninja ZX-10R", 2004, 16399, 2);
         Vehicle v4 = new Vehicle("Bayliner", "Capri", 2005, 12500, 3);
-        vehicleStorage.addVehicle(v1, false);
-        vehicleStorage.addVehicle(v2, false);
-        vehicleStorage.addVehicle(v3, false);
-        vehicleStorage.addVehicle(v4, false);
+        vehicleStorage.addVehicle(v1, true);
+        vehicleStorage.addVehicle(v2, true);
+        vehicleStorage.addVehicle(v3, true);
+        vehicleStorage.addVehicle(v4, true);
     }
 
     //EFFECTS: initializes the JSON Reader and Writer
@@ -161,13 +170,13 @@ public class VehicleManagerGUI extends JFrame {
 
         if (carRadio.isSelected()) {
             Vehicle car = new Vehicle(brand, name, year, price, 1);
-            vehicleStorage.addVehicle(car, true);
+            vehicleStorage.addVehicle(car, false);
         } else if (bikeRadio.isSelected()) {
             Vehicle bike = new Vehicle(brand, name, year, price, 2);
-            vehicleStorage.addVehicle(bike, true);
+            vehicleStorage.addVehicle(bike, false);
         } else if (yachtRadio.isSelected()) {
             Vehicle yacht = new Vehicle(brand, name, year, price, 3);
-            vehicleStorage.addVehicle(yacht, true);
+            vehicleStorage.addVehicle(yacht, false);
         }
         refreshDisplay();
     }
@@ -178,8 +187,8 @@ public class VehicleManagerGUI extends JFrame {
     private void removeVehicle() {
         Vehicle chosenVehicleToRemove = vehicleStorage.getVehicle(Integer.parseInt(removeField.getText()) - 1);
         vehicleStorage.removeVehicle(chosenVehicleToRemove);
-//        System.out.println("The " + chosenVehicleToRemove.getBrand() + " " + chosenVehicleToRemove.getName()
-//                + " has been successfully removed from the garage");
+        System.out.println("The " + chosenVehicleToRemove.getBrand() + " " + chosenVehicleToRemove.getName()
+                + " has been successfully removed from the garage");
         refreshDisplay();
     }
 
@@ -204,167 +213,139 @@ public class VehicleManagerGUI extends JFrame {
     // MODIFIES: this
     // EFFECTS: lays out the components of the user interface
     private void layoutComponents() {
-        JFrame frame = new JFrame();
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridBagLayout());
-
+        JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
+
+        // Create a tabbed pane
+        JTabbedPane tabbedPane = new JTabbedPane();
+
+        // Add tabs - don't add components to them here
+        tabbedPane.addTab("Manage", createManagePanel());
+        tabbedPane.addTab("All", new JPanel());
+        tabbedPane.addTab("Cars", new JPanel());
+        tabbedPane.addTab("Bikes", new JPanel());
+        tabbedPane.addTab("Yachts", new JPanel());
+
+        // Add tabbedPane to the main panel
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.anchor = GridBagConstraints.WEST; // laid out left side centered vertically
-        gbc.fill = GridBagConstraints.HORIZONTAL; // Allow horizontal expansion
-        gbc.insets = new Insets(5, 5, 5, 5);
-
-        addBrandComponents(panel, gbc);
-        addNameComponents(panel, gbc);
-        addYearComponents(panel, gbc);
-        addPriceComponents(panel, gbc);
-        addRemoveComponents(panel,gbc);
-        addRadioButtons(panel, gbc);
-        addButtons(panel, gbc);
-        addDisplayArea(panel, gbc);
-
-        frame.add(panel);
-        frame.setSize(600, 800);
-        frame.setLocation(650, 20);
-        frame.setTitle("StorageMaxx");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
-
-        addWindowLister(frame);
-    }
-
-    private void addWindowLister(JFrame frame) {
-        frame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                printLoggedEvents();
-            }
-        });
-    }
-
-    // MODIFIES: this
-    // EFFECTS: lays out the brand label and field
-    private void addBrandComponents(JPanel panel, GridBagConstraints gbc) {
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-
-        JLabel brandLabel = new JLabel("Brand:");
-        panel.add(brandLabel, gbc);
-
-        gbc.gridx++;
-        panel.add(brandField, gbc);
-    }
-
-    // MODIFIES: this
-    // EFFECTS: lays out the name label and field
-    private void addNameComponents(JPanel panel, GridBagConstraints gbc) {
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-
-        JLabel nameLabel = new JLabel("Name:");
-        panel.add(nameLabel, gbc);
-
-        gbc.gridx++;
-        panel.add(nameField, gbc);
-    }
-
-    // MODIFIES: this
-    // EFFECTS: lays out the year label and field
-    private void addYearComponents(JPanel panel, GridBagConstraints gbc) {
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-
-        JLabel yearLabel = new JLabel("Year:");
-        panel.add(yearLabel, gbc);
-
-        gbc.gridx++;
-        panel.add(yearField, gbc);
-    }
-
-    // MODIFIES: this
-    // EFFECTS: lays out the price label and field
-    private void addPriceComponents(JPanel panel, GridBagConstraints gbc) {
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-
-        JLabel priceLabel = new JLabel("Price:");
-        panel.add(priceLabel, gbc);
-
-        gbc.gridx++;
-        panel.add(priceField, gbc);
-    }
-
-    // MODIFIES: this
-    // EFFECTS: lays out the remove vehicle by index label and field
-    private void addRemoveComponents(JPanel panel, GridBagConstraints gbc) {
-        gbc.gridx = 0;
-        gbc.gridy = 4;
-
-        JLabel removeLabel = new JLabel("Remove:");
-        panel.add(removeLabel, gbc);
-
-        gbc.gridx++;
-        panel.add(removeField, gbc);
-
-    }
-
-    // MODIFIES: this
-    // EFFECTS: lays out the radio buttons for the types of vehicles
-    private void addRadioButtons(JPanel panel, GridBagConstraints gbc) {
-        gbc.gridx = 0;
-        gbc.gridy = 5;
-        panel.add(carRadio, gbc);
-
-        gbc.gridy = 6;
-        panel.add(bikeRadio, gbc);
-
-        gbc.gridy = 7;
-        panel.add(yachtRadio, gbc);
-    }
-
-
-
-    // MODIFIES: this
-    // EFFECTS: lays out the add, remove, show car/bike/yacht, save, load buttons
-    private void addButtons(JPanel panel, GridBagConstraints gbc) {
-        gbc.gridwidth = 2;
-        gbc.gridy = 8;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel.add(addButton, gbc);
+        gbc.weightx = 1;
+        panel.add(tabbedPane, gbc);
 
-        gbc.gridy = 9;
-        panel.add(removeButton, gbc);
+        // Add ChangeListener to tabbedPane
+        tabbedPane.addChangeListener(e -> {
+            JTabbedPane sourceTabbedPane = (JTabbedPane) e.getSource();
+            int index = sourceTabbedPane.getSelectedIndex();
+            String tabTitle = sourceTabbedPane.getTitleAt(index);
 
-        gbc.gridy = 10;
-        panel.add(showAllButton, gbc);
+            // Remove the scrollPane from its current parent (if any)
+            Container parent = scrollPane.getParent();
+            if (parent != null) {
+                parent.remove(scrollPane);
+            }
 
-        gbc.gridy = 11;
-        panel.add(showCarsButton, gbc);
+            if (!"Manage".equals(tabTitle)) {
+                // Add the scrollPane to the current tab
+                JPanel currentTab = (JPanel) tabbedPane.getComponentAt(index);
+                currentTab.setLayout(new BorderLayout());
+                currentTab.add(scrollPane, BorderLayout.CENTER);
+                updateDisplayArea(tabTitle); // Update the display area based on the selected tab
+            }
 
-        gbc.gridy = 12;
-        panel.add(showBikesButton, gbc);
+            panel.revalidate();
+            panel.repaint();
+        });
 
-        gbc.gridy = 13;
-        panel.add(showYachtsButton, gbc);
-
-        gbc.gridy = 14;
-        panel.add(saveButton, gbc);
-
-        gbc.gridy = 15;
-        panel.add(loadButton, gbc);
+        add(panel);
     }
 
-    // MODIFIES: this
-    // EFFECTS: lays out a scrollable area to display the vehicles in garage
-    private void addDisplayArea(JPanel panel, GridBagConstraints gbc) {
+
+    private JPanel createManagePanel() {
+        JPanel managePanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5, 5, 5, 5);
         gbc.gridx = 0;
-        gbc.gridy = 16;
-        gbc.gridwidth = GridBagConstraints.REMAINDER; // occupies all cells in remaining row
-        gbc.fill = GridBagConstraints.BOTH; // resizes the display pane in both directions
-        gbc.weightx = 1.0; // occupies any extra space when container is resized;
-        gbc.weighty = 1.0; //
-        panel.add(new JScrollPane(displayArea), gbc);
+        gbc.gridy = 0;
+
+        // Brand Field
+        managePanel.add(new JLabel("Brand:"), gbc);
+        gbc.gridx++;
+        managePanel.add(brandField, gbc);
+
+        // Name Field
+        gbc.gridx = 0;
+        gbc.gridy++;
+        managePanel.add(new JLabel("Name:"), gbc);
+        gbc.gridx++;
+        managePanel.add(nameField, gbc);
+
+        // Year Field
+        gbc.gridx = 0;
+        gbc.gridy++;
+        managePanel.add(new JLabel("Year:"), gbc);
+        gbc.gridx++;
+        managePanel.add(yearField, gbc);
+
+        // Price Field
+        gbc.gridx = 0;
+        gbc.gridy++;
+        managePanel.add(new JLabel("Price:"), gbc);
+        gbc.gridx++;
+        managePanel.add(priceField, gbc);
+
+        // Radio Buttons for Vehicle Type
+        gbc.gridx = 0;
+        gbc.gridy++;
+        managePanel.add(carRadio, gbc);
+        gbc.gridx++;
+        managePanel.add(bikeRadio, gbc);
+        gbc.gridx++;
+        managePanel.add(yachtRadio, gbc);
+
+        // Remove Field
+        gbc.gridx = 0;
+        gbc.gridy++;
+        managePanel.add(new JLabel("Remove Index:"), gbc);
+        gbc.gridx++;
+        managePanel.add(removeField, gbc);
+
+        // Buttons spanning two columns
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.gridwidth = 2;
+        managePanel.add(addButton, gbc);
+
+        gbc.gridy++;
+        managePanel.add(removeButton, gbc);
+
+        gbc.gridy++;
+        managePanel.add(saveButton, gbc);
+
+        gbc.gridy++;
+        managePanel.add(loadButton, gbc);
+
+        return managePanel;
+    }
+
+
+    private void updateDisplayArea(String tabTitle) {
+        switch (tabTitle) {
+            case "All":
+                displayArea.setText(getSpecifiedVehicleInfo("Vehicle"));
+                break;
+            case "Cars":
+                displayArea.setText(getSpecifiedVehicleInfo("Car"));
+                break;
+            case "Bikes":
+                displayArea.setText(getSpecifiedVehicleInfo("Bike"));
+                break;
+            case "Yachts":
+                displayArea.setText(getSpecifiedVehicleInfo("Yacht"));
+                break;
+        }
     }
 
     // REQUIRES: a valid type
@@ -373,11 +354,11 @@ public class VehicleManagerGUI extends JFrame {
     public String getSpecifiedVehicleInfo(String type) {
         StringBuilder info = new StringBuilder();
         int index = 1;
-        info.append(type + "s:").append("\n");
+        info.append(type).append("s:").append("\n");
 
         for (Vehicle vehicle : vehicleStorage.getVehicles()) {
             if (vehicle.getTypeName().equals(type) | type.equals("Vehicle")) {
-                info.append(index + ")" + "   ");
+                info.append(index).append(")").append("   ");
                 info.append("Brand: ").append(vehicle.getBrand()).append("   |   ");
                 info.append("Name: ").append(vehicle.getName()).append("   |   ");
                 info.append("Year: ").append(vehicle.getYear()).append("   |   ");
