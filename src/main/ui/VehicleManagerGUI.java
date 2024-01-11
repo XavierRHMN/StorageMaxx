@@ -1,6 +1,8 @@
 package main.ui;
 
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
+import main.model.Event;
+import main.model.EventLog;
 import main.model.Vehicle;
 import main.model.VehicleStorage;
 import main.persistence.JsonReader;
@@ -8,12 +10,15 @@ import main.persistence.JsonWriter;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.*;
 
 import static main.model.Vehicle.VehicleType.*;
 
 // Vehicle manager application that uses a GUI
 public class VehicleManagerGUI extends JFrame {
+    private EventLog eventLog;
     private VehicleStorage vehicleStorage;
     private JButton showAllButton;
     private JButton showCarsButton;
@@ -40,9 +45,18 @@ public class VehicleManagerGUI extends JFrame {
 
     // EFFECTS: runs the vehicle manager application
     public VehicleManagerGUI() {
+        eventLog = EventLog.getInstance();
         vehicleStorage = new VehicleStorage("Users Storage");
         setLookAndFeel();
         initComponents();
+    }
+
+    private void printLoggedEvents() {
+        System.out.println("Garage opened");
+        for (Event event : eventLog) { // Iterate over the events in the log
+            System.out.println(event.toString()); // Print each event (uses Event's toString method)
+        }
+        System.out.println("Garage closed");
     }
 
     // MODIFIES: this
@@ -153,10 +167,10 @@ public class VehicleManagerGUI extends JFrame {
         Vehicle v2 = new Vehicle("Nissan", "370z", 2010, 16000, CAR);
         Vehicle v3 = new Vehicle("Kawasaki", "Ninja ZX-10R", 2004, 16399, BIKE);
         Vehicle v4 = new Vehicle("Bayliner", "Capri", 2005, 12500, YACHT);
-        vehicleStorage.addVehicle(v1, true);
-        vehicleStorage.addVehicle(v2, true);
-        vehicleStorage.addVehicle(v3, true);
-        vehicleStorage.addVehicle(v4, true);
+        vehicleStorage.addVehicle(v1, false);
+        vehicleStorage.addVehicle(v2, false);
+        vehicleStorage.addVehicle(v3, false);
+        vehicleStorage.addVehicle(v4, false);
     }
 
     //EFFECTS: initializes the JSON Reader and Writer
@@ -176,16 +190,16 @@ public class VehicleManagerGUI extends JFrame {
 
         if (carRadio.isSelected()) {
             Vehicle car = new Vehicle(brand, name, year, price, CAR);
-            vehicleStorage.addVehicle(car, false);
+            vehicleStorage.addVehicle(car, true);
         } else if (bikeRadio.isSelected()) {
             Vehicle bike = new Vehicle(brand, name, year, price, BIKE);
-            vehicleStorage.addVehicle(bike, false);
+            vehicleStorage.addVehicle(bike, true);
         } else if (yachtRadio.isSelected()) {
             Vehicle yacht = new Vehicle(brand, name, year, price, YACHT);
-            vehicleStorage.addVehicle(yacht, false);
+            vehicleStorage.addVehicle(yacht, true);
         } else if (otherRadio.isSelected()) {
             Vehicle yacht = new Vehicle(brand, name, year, price, OTHER);
-            vehicleStorage.addVehicle(yacht, false);
+            vehicleStorage.addVehicle(yacht, true);
         }
         refreshDisplay();
     }
@@ -223,6 +237,7 @@ public class VehicleManagerGUI extends JFrame {
     // MODIFIES: this
     // EFFECTS: lays out the components of the user interface
     private void layoutComponents() {
+        JFrame frame = new JFrame("StorageMaxx");
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
@@ -269,7 +284,23 @@ public class VehicleManagerGUI extends JFrame {
             panel.repaint();
         });
 
-        add(panel);
+        frame.add(panel);
+        frame.setVisible(true);
+        frame.setSize(520, 475);
+        frame.setLocationRelativeTo(null);
+        frame.setTitle("StorageMaxx");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        addWindowLister(frame);
+    }
+
+    private void addWindowLister(JFrame frame) {
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                printLoggedEvents();
+            }
+        });
     }
 
 
