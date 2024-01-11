@@ -1,16 +1,16 @@
-package ui;
+package main.ui;
 
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
-import model.Vehicle;
-import model.VehicleStorage;
-import persistence.JsonReader;
-import persistence.JsonWriter;
+import main.model.Vehicle;
+import main.model.VehicleStorage;
+import main.persistence.JsonReader;
+import main.persistence.JsonWriter;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 
-import static model.Vehicle.VehicleType.*;
+import static main.model.Vehicle.VehicleType.*;
 
 // Vehicle manager application that uses a GUI
 public class VehicleManagerGUI extends JFrame {

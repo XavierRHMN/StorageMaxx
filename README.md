@@ -6,7 +6,7 @@ a virtual garage where you can track your vehicles and their information.
 
 ## Features
 - Add/remove vehicles (cars, bikes, yachts)
-- Enter custom information for each vehicle (make, model, price, type)
+- Enter custom information for each vehicle (make, main.model, price, type)
 - View all vehicles or their subsets
 - Saving/Loading garage
 

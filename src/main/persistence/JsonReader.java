@@ -1,7 +1,7 @@
-package persistence;
+package main.persistence;
 
-import model.Vehicle;
-import model.VehicleStorage;
+import main.model.Vehicle;
+import main.model.VehicleStorage;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

@@ -1,15 +1,15 @@
-package ui;
+package main.ui;
 
-import model.Vehicle;
-import model.VehicleStorage;
-import persistence.JsonReader;
-import persistence.JsonWriter;
+import main.model.Vehicle;
+import main.model.VehicleStorage;
+import main.persistence.JsonReader;
+import main.persistence.JsonWriter;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
 
-import static model.Vehicle.VehicleType.*;
+import static main.model.Vehicle.VehicleType.*;
 
 // Vehicle manager application that uses console commands
 public class VehicleManager {

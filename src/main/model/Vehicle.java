@@ -1,9 +1,9 @@
-package model;
+package main.model;
 
 import org.json.JSONObject;
-import persistence.Writable;
+import main.persistence.Writable;
 
-import static model.Vehicle.VehicleType.*;
+import static main.model.Vehicle.VehicleType.*;
 
 // Represents a bought vehicle having a brand, name, year, price (in dollars), type
 public class Vehicle implements Writable {
@@ -62,7 +62,7 @@ public class Vehicle implements Writable {
             return "Yacht";
         } else if (getType() == OTHER) {
             return "Other";
-        }else {
+        } else {
             return "Vehicle";
         }
     }

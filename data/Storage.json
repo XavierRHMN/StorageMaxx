@@ -1,33 +1,61 @@
 {
-    "name": "My Vehicle Storage",
+    "name": "Users Storage",
     "vehicles": [
         {
             "year": 1999,
             "price": 5000,
             "name": "MX-5",
-            "type": 1,
+            "type": "CAR",
             "brand": "Mazda"
         },
         {
             "year": 2010,
             "price": 16000,
             "name": "370z",
-            "type": 1,
+            "type": "CAR",
             "brand": "Nissan"
         },
         {
             "year": 2004,
             "price": 16399,
             "name": "Ninja ZX-10R",
-            "type": 2,
+            "type": "BIKE",
             "brand": "Kawasaki"
         },
         {
             "year": 2005,
             "price": 12500,
             "name": "Capri",
-            "type": 3,
+            "type": "YACHT",
             "brand": "Bayliner"
+        },
+        {
+            "year": 1,
+            "price": 1,
+            "name": "a",
+            "type": "OTHER",
+            "brand": "a"
+        },
+        {
+            "year": 1,
+            "price": 1,
+            "name": "a",
+            "type": "YACHT",
+            "brand": "a"
+        },
+        {
+            "year": 1,
+            "price": 1,
+            "name": "a",
+            "type": "BIKE",
+            "brand": "a"
+        },
+        {
+            "year": 1,
+            "price": 1,
+            "name": "a",
+            "type": "CAR",
+            "brand": "a"
         }
     ]
 }
