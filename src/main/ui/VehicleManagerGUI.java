@@ -101,11 +101,11 @@ public class VehicleManagerGUI extends JFrame {
     // MODIFIES: this
     // EFFECTS: adds gifs to each button
     private void initButtonGifs() {
-        ImageIcon carIcon = new ImageIcon("car.gif");
-        ImageIcon starIcon = new ImageIcon("star.gif");
-        ImageIcon bikeIcon = new ImageIcon("bike.gif");
-        ImageIcon yachtIcon = new ImageIcon("yacht.gif");
-        ImageIcon saveIcon = new ImageIcon("save.gif");
+        ImageIcon carIcon = new ImageIcon("src/resources/car.gif");
+        ImageIcon starIcon = new ImageIcon("src/resources/star.gif");
+        ImageIcon bikeIcon = new ImageIcon("src/resources/bike.gif");
+        ImageIcon yachtIcon = new ImageIcon("src/resources/yacht.gif");
+        ImageIcon saveIcon = new ImageIcon("src/resources/save.gif");
 
 
         Image resizedCarImage =  carIcon.getImage().getScaledInstance(40, 20, Image.SCALE_DEFAULT);
