@@ -15,3 +15,6 @@ a virtual garage where you can track your vehicles and their information.
 
 ### Prerequisites
 - Java JDK 8 or higher.
+
+## License
+[MIT License](LICENSE)
